@@ -70,3 +70,19 @@
         margin-right: 1rem;
     }
 </style>
+
+<style>
+    ul.validationErrors
+    {
+        margin: 0px;
+        padding: 0px;
+        list-style-type: none;
+    }
+
+    ul.validationErrors li
+    {
+        margin: 0px;
+        padding: 0px;
+        margin-left: 1em;
+    }
+</style>
