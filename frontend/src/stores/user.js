@@ -17,7 +17,6 @@ export const useUserStore = defineStore('user', () => {
                 axios.defaults.headers.common['Authorization'] = null;
             }
             else {
-                console.log(user.token)
                 axios.defaults.headers.common['Authorization'] = 'Bearer '+user.token;
             }
         })
