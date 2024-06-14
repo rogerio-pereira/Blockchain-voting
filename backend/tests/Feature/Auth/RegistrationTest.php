@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\HasApiTokens;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -21,11 +24,43 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertStatus(201);
         $response->assertJson([
-            'user' => [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'role' => 'Voter',
-            ]
+                'user' => [
+                    'name' => 'Test User',
+                    'email' => 'test@example.com',
+                    'role' => 'Voter',
+                ]
+            ])
+            ->assertJsonStructure([
+                'user' => [
+                    'name',
+                    'email',
+                    'role',
+                    'token',    //Must Contain a token
+                ]
+            ]);
+    }
+
+    public function test_users_when_register_generate_a_new_token(): void
+    {
+        $user = User::factory()->create();
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'id' => 1,
+            'tokenable_type' => 'App\Models\User',
+            'tokenable_id' => $user->id,
+        ]);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'id' => 1,
+            'tokenable_type' => 'App\Models\User',
+            'tokenable_id' => $user->id,
         ]);
     }
 }
