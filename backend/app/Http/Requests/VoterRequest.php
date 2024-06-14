@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class VoterRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class VoterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,12 +24,16 @@ class VoterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|numeric|exists:users,id',
-            'voting_district_id' => 'required|numeric|exists:voting_districts,id',
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required|size:2',
-            'zipcode' => 'required|numeric|min:10000|max:99999',
+            'user.name' => ['required', 'string', 'max:255'],
+            'user.email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'user.password' => ['required', 'confirmed', Password::defaults()],
+
+            'voter.voting_district_id' => 'required|numeric|exists:voting_districts,id',
+            'voter.address' => 'required',
+            'voter.address_2' => 'nullable',
+            'voter.city' => 'required',
+            'voter.state' => 'required|size:2',
+            'voter.zipcode' => 'required|numeric|min:10000|max:99999',
         ];
     }
 }
