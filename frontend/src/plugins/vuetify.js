@@ -11,8 +11,12 @@ export default createVuetify({
     themes: {
         dark: {
             colors: {
-                primary: '#455A64',     //blue-grey-darken-2
-                secondary: '#90A4AE',   //blue-grey-lighten-2
+                primary: '#90A4AE',     //blue-grey-lighten-2
+                secondary: '#546E7A',   //blue-grey-darken-1
+                success: '#4DB6AC', //teal-lighten-2
+                error: '#F48FB1', //pink-lighten-3 
+                info: '#4DD0E1', //cyan-lighten-2
+                warning: '#FFCC80', //orange-lighten-3
             },
         }
     }
