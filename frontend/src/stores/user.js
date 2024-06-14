@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', () => {
                     user.value = {
                             id: null  
                         }
-                    router.push({name: 'login'})
+                    router.push({name: 'Login'})
                 })
                 .catch(error => {
                     console.log(error.response.data)
