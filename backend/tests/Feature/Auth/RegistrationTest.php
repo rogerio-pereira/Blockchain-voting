@@ -24,6 +24,7 @@ class RegistrationTest extends TestCase
             'user' => [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'role' => 'Voter',
             ]
         ]);
     }
