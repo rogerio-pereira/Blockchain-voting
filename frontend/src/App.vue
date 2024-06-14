@@ -11,17 +11,30 @@
                 </v-app-bar-title>
 
                 <template v-slot:append class='menuWraper'>
-                    <RouterLink to="/register" v-if='userStore.isGuest' class='menuItem text-blue-grey-lighten-2'>
-                        Register
-                    </RouterLink>
+                    <!-- Guest -->
+                    <span v-if='userStore.isGuest'>
+                        <RouterLink to="/register" class='menuItem text-blue-grey-lighten-2'>
+                            Register
+                        </RouterLink>
+                        
+                        <RouterLink to="/login" class='menuItem text-blue-grey-lighten-2'>
+                            Login
+                        </RouterLink>
+                    </span>
                     
-                    <RouterLink to="/login" v-if='userStore.isGuest' class='menuItem text-blue-grey-lighten-2'>
-                        Login
-                    </RouterLink>
-                    
-                    <RouterLink to="/logout" @click.prevent='logout' v-if='!userStore.isGuest' class='menuItem text-blue-grey-lighten-2'>
-                        Logout
-                    </RouterLink>
+                    <!-- Logged in -->
+                    <span v-if='!userStore.isGuest'>
+                        <span v-if="userStore.user.role.toLowerCase() == 'admin'">
+                            <admin-menu />
+                        </span>
+                        <span v-else>
+                            <voter-menu />
+                        </span>
+
+                        <RouterLink to="/logout" @click.prevent='logout' class='menuItem text-blue-grey-lighten-2'>
+                            Logout
+                        </RouterLink>
+                    </span>
                 </template>
             </v-app-bar>
 
@@ -31,13 +44,17 @@
                 </v-container>
             </v-main>
         </v-app>
-  </v-responsive>
+    </v-responsive>
 
+    <snackbar />
 </template>
 
 <script setup>
     import { RouterLink, RouterView } from 'vue-router'
     import { useUserStore } from '@/stores/user'
+    import AdminMenu from '@/components/layout/menu/AdminMenu.vue'
+    import VoterMenu from '@/components/layout/menu/VoterMenu.vue'
+    import Snackbar from '@/components/layout/Snackbar.vue'
 
     const userStore = useUserStore()
     
