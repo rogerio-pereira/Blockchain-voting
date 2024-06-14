@@ -24,7 +24,7 @@ class VotingDistrictFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => '['.fake()->state().'] '.fake()->city().' ('.rand(1000,9999).')',  //[FL] Land O Lakes (xxxx)
+            'name' => '['.fake()->stateAbbr().'] '.fake()->city().' ('.rand(1000,9999).')',  //[FL] Land O Lakes (xxxx)
         ];
     }
 }
