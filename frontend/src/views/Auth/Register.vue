@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card width='30vw' class='mx-auto mt-16'>
         <v-card-item>
             <v-card-title class='text-center'>
                 Register
