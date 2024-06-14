@@ -52,9 +52,9 @@ const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-app.use(router)
-    .use(VueAxios, axios)
+app.use(VueAxios, axios)
     .use(vuetify)
-    .use(pinia)
+    .use(pinia)     //Pinia must be before router, because router is checking userStore
+    .use(router)
 
 app.mount('#app')
