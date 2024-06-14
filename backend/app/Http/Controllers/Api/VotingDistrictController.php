@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VotingDistrictRequest;
 use App\Models\VotingDistrict;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,7 @@ class VotingDistrictController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(VotingDistrictRequest $request)
     {
         $data = $request->validated();
 
@@ -39,7 +40,7 @@ class VotingDistrictController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(VotingDistrictRequest $request, string $id)
     {
         $data = $request->validated();
 
