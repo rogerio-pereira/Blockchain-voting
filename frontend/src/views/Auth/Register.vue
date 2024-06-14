@@ -67,7 +67,7 @@
         axios.post('/register', form.value)
             .then(response => {
                 userStore.user = response.data.user
-                router.push({name: 'home'})
+                router.push({name: 'Home'})
             })
             .catch(error => {
                 console.log(error.response.data)
