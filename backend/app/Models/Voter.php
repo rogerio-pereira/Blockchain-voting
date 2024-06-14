@@ -4,16 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class VotingDistrict extends Model
+class Voter extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'user_id',
+        'voting_district_id',
+        'address',
+        'address_2',
+        'city',
+        'state',
+        'zipcode',
     ];
 
     /**
@@ -35,8 +39,13 @@ class VotingDistrict extends Model
      * RELATIONSHIPS
      * =================================================================================================================
      */
-    public function voters(): HasMany
+    public function votingDistrict() : BelongsTo
     {
-        return $this->hasMany(Voter::class);
+        return $this->belongsTo(VotingDistrict::class);
+    }
+
+    public function user() : BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
