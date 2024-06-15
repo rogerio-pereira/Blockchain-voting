@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('voters', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('voting_district_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('voting_district_id');
             $table->string('address');
             $table->string('address_2')->nullable();
             $table->string('city');
@@ -22,6 +22,16 @@ return new class extends Migration
             $table->string('zipcode');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->cascadeOnDelete();
+
+            $table->foreign('voting_district_id')
+                ->references('id')
+                ->on('voting_districts')
+                ->cascadeOnDelete();
         });
     }
 
