@@ -13,7 +13,8 @@ class ElectionController extends Controller
      */
     public function index()
     {
-        return Election::all();
+        return Election::with('votingDistricts')
+                    ->get();
     }
 
     /**
@@ -33,9 +34,10 @@ class ElectionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Election $election)
+    public function show(string $id)
     {
-        $election = Election::findOrFail($election);
+        $election = Election::with('votingDistricts')
+                        ->findOrFail($id);
 
         return $election;
     }
@@ -43,11 +45,11 @@ class ElectionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ElectionRequest $request, Election $election)
+    public function update(ElectionRequest $request, string $id)
     {
         $data = $request->validated();
 
-        $election = Election::findOrFail($election);
+        $election = Election::findOrFail($id);
         $election->update($data);
 
         $election->votingDistricts()->sync($data['voting_districts']);
@@ -58,9 +60,9 @@ class ElectionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Election $election)
+    public function destroy(string $id)
     {
-        $election = Election::findOrFail($election);
+        $election = Election::findOrFail($id);
         $election->delete();
 
         return response()->json([], 204);
