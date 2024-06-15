@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ElectionController;
 use App\Http\Controllers\Api\VoterController;
 use App\Http\Controllers\Api\VotingDistrictController;
 use App\Http\Middleware\IsAdmin;
@@ -19,5 +20,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //Admin Routes
     Route::group(['middleware' => [IsAdmin::class]], function() {
         Route::resource('/voting-districts', VotingDistrictController::class);
+
+        Route::resource('/elections', ElectionController::class);
     });
 });
