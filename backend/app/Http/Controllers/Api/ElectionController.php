@@ -20,6 +20,12 @@ class ElectionController extends Controller
                     ->with('candidates')
                     ->get();
     }
+    
+    public function active()
+    {
+        return Election::active()
+                    ->get();
+    }
 
     /**
      * Store a newly created resource in storage.
