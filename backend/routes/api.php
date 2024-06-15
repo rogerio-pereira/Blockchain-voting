@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\ElectionController;
 use App\Http\Controllers\Api\VoterController;
 use App\Http\Controllers\Api\VotingDistrictController;
-use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\Api\CandidateController;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
