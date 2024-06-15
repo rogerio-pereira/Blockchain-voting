@@ -23,34 +23,7 @@
                             :headers="headers"
                         >
                             <template v-slot:item.actions="{ item }">
-                                <v-btn 
-                                    density="compact"
-                                    color='success' 
-                                    variant="text"
-                                    icon="mdi-play-circle" 
-                                    title='Start'
-                                    v-if='item.started == null'
-                                    @click='startElection(item)'
-                                />
-
-                                <v-btn 
-                                    density="compact"
-                                    color='secondary' 
-                                    variant="text"
-                                    icon="mdi-town-hall" 
-                                    title='Districts'
-                                    @click='showDistrictDialog(item)'
-                                />
-
-                                <v-btn 
-                                    density="compact"
-                                    color='secondary' 
-                                    variant="text"
-                                    icon="mdi-account-tie" 
-                                    title='Candidates'
-                                    @click='showCandidateDialog(item)'
-                                />
-
+                                <!-- Edit -->
                                 <RouterLink :to="'/election/form/'+item.id" class='mt-4'>
                                     <v-btn 
                                         density="compact"
@@ -61,13 +34,58 @@
                                     />
                                 </RouterLink>
 
+                                <!-- Delete -->
                                 <v-btn 
                                     density="compact"
                                     color='error' 
                                     variant="text"
                                     icon="mdi-trash-can-outline" 
                                     title='Delete'
+                                    class='mr-4'
                                     @click='deleteItem(item.id)'
+                                />
+
+                                <!-- Voting Districts -->
+                                <v-btn 
+                                    density="compact"
+                                    color='secondary' 
+                                    variant="text"
+                                    icon="mdi-town-hall" 
+                                    title='Districts'
+                                    @click='showDistrictDialog(item)'
+                                />
+
+                                <!-- Candidates -->
+                                <v-btn 
+                                    density="compact"
+                                    color='secondary' 
+                                    variant="text"
+                                    icon="mdi-account-tie" 
+                                    title='Candidates'
+                                    class='mr-4'
+                                    @click='showCandidateDialog(item)'
+                                />
+
+                                <!-- Start Election -->
+                                <v-btn 
+                                    density="compact"
+                                    color='success' 
+                                    variant="text"
+                                    icon="mdi-play-circle" 
+                                    title='Start'
+                                    v-if='item.started == null'
+                                    @click='startElection(item)'
+                                />
+
+                                <!-- Stop Election -->
+                                <v-btn 
+                                    density="compact"
+                                    color='error' 
+                                    variant="text"
+                                    icon="mdi-stop-circle" 
+                                    title='Stop'
+                                    v-if='item.started != null && item.ended == null'
+                                    @click='endElection(item)'
                                 />
                             </template>
                         </v-data-table>
@@ -120,7 +138,7 @@
             { title: 'End Date', value: 'end_date'},
             { title: 'Started', value: 'started'},
             { title: 'Ended', value: 'ended'},
-            { title: 'Actions', value: 'actions', width: '200' },
+            { title: 'Actions', value: 'actions', width: '210' },
         ]
 
     onMounted(() => {
@@ -174,7 +192,26 @@
                 loadElections()
             })
             .catch(error => {
-                const message = "Failed to delete. Reasons: "+error.response.data.message
+                const message = "Failed to start. Reasons: "+error.response.data.message
+                snackbarStore.showSnackBar(message, 'error', 5000)
+            })
+            .finally(() => {
+                loading.value = false
+            })
+    }
+
+    function endElection(election)
+    {
+        loading.value = true
+        snackbarStore.showSnackBar('Stoping election, please wait.', 'info', -1)
+
+        axios.post('/api/elections/'+election.id+'/stop')
+            .then(response => {
+                snackbarStore.hideSnackBar()
+                loadElections()
+            })
+            .catch(error => {
+                const message = "Failed to stop. Reasons: "+error.response.data.message
                 snackbarStore.showSnackBar(message, 'error', 5000)
             })
             .finally(() => {
