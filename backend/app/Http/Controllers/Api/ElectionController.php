@@ -7,6 +7,7 @@ use App\Http\Requests\ElectionRequest;
 use App\Mail\ElectionStarted;
 use App\Models\Election;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class ElectionController extends Controller
 {
@@ -40,9 +41,9 @@ class ElectionController extends Controller
         $election = Election::with('votingDistricts.voters.user')
                         ->with('candidates')
                         ->findOrFail($id);
-
+                        
         if($election->started != null) {
-            return response()->json(['message' => "Can't Start this election because it's already been started."], 400);
+            return response()->json(['message' => "Can't start this election because it's already been started."], 400);
         }
 
         if($election->ended != null) {
@@ -59,7 +60,7 @@ class ElectionController extends Controller
                 $user = $voter->user;
 
                 Mail::to($user->email)
-                    ->queue(new ElectionStarted($election, $user))
+                    ->queue(new ElectionStarted($election, $user));
             }
         }
     }

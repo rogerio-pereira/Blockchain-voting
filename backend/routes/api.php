@@ -22,8 +22,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['middleware' => [IsAdmin::class]], function() {
         Route::resource('/voting-districts', VotingDistrictController::class);
 
-        Route::resource('/elections', ElectionController::class);
-
         Route::resource('/candidates', CandidateController::class);
+
+        Route::resource('/elections', ElectionController::class);
+        Route::post('elections/{id}/start', [ElectionController::class, 'start']);
     });
 });
