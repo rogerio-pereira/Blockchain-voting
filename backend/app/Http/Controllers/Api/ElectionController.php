@@ -65,6 +65,20 @@ class ElectionController extends Controller
         }
     }
 
+    public function stop(string $id)
+    {
+        $election = Election::findOrFail($id);
+
+        if($election->ended != null) {
+            return response()->json(['message' => "Can't stop this election because it's already been ended."], 400);
+        }
+
+        $now = Carbon::now();
+        $election->update([
+                'ended' => $now
+            ]);
+    }
+
     /**
      * Display the specified resource.
      */
