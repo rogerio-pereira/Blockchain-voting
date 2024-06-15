@@ -2,13 +2,13 @@
     <v-card :loading="loading ? 'info' : null" :key='renderKey'>
         <v-card-item>
             <v-card-title class='text-center'>
-                Voting Districs<br/>
+                Elections<br/>
             </v-card-title>
 
            <v-card-text>
                 <v-row>
                     <v-col class='text-center'>
-                        <RouterLink to="/voting-district/form" class='mt-4'>
+                        <RouterLink to="/election/form" class='mt-4'>
                             <v-btn color='primary'>
                                 Create
                             </v-btn>
@@ -19,12 +19,21 @@
                 <v-row>
                     <v-col>
                         <v-data-table 
-                            :items="districts"
+                            :items="elections"
                             :headers="headers"
                         >
                             <template v-slot:item.actions="{ item }">
 
-                                <RouterLink :to="'/voting-district/form/'+item.id" class='mt-4'>
+                                <v-btn 
+                                    density="compact"
+                                    color='info' 
+                                    variant="text"
+                                    icon="mdi-town-hall" 
+                                    title='Districts'
+                                    @click='showDistrictDialog(item)'
+                                />
+
+                                <RouterLink :to="'/election/form/'+item.id" class='mt-4'>
                                     <v-btn 
                                         density="compact"
                                         color='primary' 
@@ -49,36 +58,51 @@
             </v-card-text>
         </v-card-item>
     </v-card>
+
+    <districts-dialog 
+        :showDialog='districtDialogShow'
+        :electionId='districtDialogElectionId'
+        :districts='districtDialogDistricts'
+        @closeDialog='closeDistrictDialog'
+    />
 </template>
 
 <script setup>
     import { ref, onMounted, computed } from 'vue'
     import axios from 'axios'
     import { useSnackbarStore } from '@/stores/snackbar'
+    import DistrictsDialog from '@/views/Election/DistrictsDialog.vue'
 
     const snackbarStore = useSnackbarStore()  
 
-    const districts = ref([])
+    const elections = ref([])
     const loading = ref(false)
     const renderKey = ref(0)
 
+    const districtDialogShow = ref(false)
+    const districtDialogElectionId = ref(null)
+    const districtDialogDistricts = ref([])
+
     const headers = [
-            { title: 'Id', value: 'id' },    
-            { title: 'Name', value: 'name' },    
-            { title: 'Actions', value: 'actions', width: '100' },    
+            { title: 'Id', value: 'id' },
+            { title: 'Start Date', value: 'start_date' },
+            { title: 'End Date', value: 'end_date'},
+            { title: 'Started', value: 'started'},
+            { title: 'Ended', value: 'ended'},
+            { title: 'Actions', value: 'actions', width: '150' },
         ]
 
     onMounted(() => {
-            loadDistricts()
+            loadElections()
         })
 
-    function loadDistricts() 
+    function loadElections() 
     {
         loading.value = true
 
-        axios.get('/api/voting-districts')
+        axios.get('/api/elections')
             .then(response => {
-                districts.value = response.data
+                elections.value = response.data
             })
             .catch(error => {
 
@@ -94,10 +118,10 @@
         loading.value = true
         snackbarStore.showSnackBar('Deleting, please wait.', 'info', -1)
 
-        axios.delete('/api/voting-districts/'+id)
+        axios.delete('/api/elections/'+id)
             .then(response => {
                 snackbarStore.hideSnackBar()
-                loadDistricts()
+                loadElections()
             })
             .catch(error => {
                 const message = "Failed to delete. Reasons: "+error.response.data.message
@@ -106,6 +130,20 @@
             .finally(() => {
                 loading.value = false
             })
+    }
+
+    function showDistrictDialog(election)
+    {
+        districtDialogElectionId.value = election.id
+        districtDialogDistricts.value = election.voting_districts
+        districtDialogShow.value = true
+    }
+    
+    function closeDistrictDialog()
+    {
+        districtDialogElectionId.value = null
+        districtDialogDistricts.value = []
+        districtDialogShow.value = false
     }
 </script>
 

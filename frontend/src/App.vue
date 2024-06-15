@@ -64,14 +64,13 @@
     }
 </script>
 
-<style scoped>
+<style>
     .menuItem
     {
-        margin-right: 1rem;
+        margin-right: 1rem !important;
+        text-decoration: none !important;
     }
-</style>
 
-<style>
     ul.validationErrors
     {
         margin: 0px;
