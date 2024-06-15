@@ -38,11 +38,17 @@
     import axios from 'axios'
     import { useUserStore } from '@/stores/user'
     import router from '@/router'
+    import { useSnackbarStore } from '@/stores/snackbar'
+
     const userStore = useUserStore()
+
+    const snackbarStore = useSnackbarStore()  
+
     const form = ref({
         'email': '',
         'password': '',
     })
+
     function login() {
         axios.post('/login', form.value)
             .then(response => {
@@ -50,7 +56,8 @@
                 router.push({name: 'Home'})
             })
             .catch(error => {
-                console.log(error.response.data)
+                const message = "Failed to Login. Reasons: "+error.response.data.message
+                snackbarStore.showSnackBar(message, 'error', 5000)
             })
     }
 </script>
