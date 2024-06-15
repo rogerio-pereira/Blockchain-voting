@@ -7,6 +7,8 @@ import VotingDistrict from '../views/VotingDistrict/VotingDistrict.vue'
 import VotingDistrictForm from '../views/VotingDistrict/VotingDistrictForm.vue'
 import Election from '../views/Election/Election.vue'
 import ElectionForm from '../views/Election/ElectionForm.vue'
+import Candidate from '../views/Candidate/Candidate.vue'
+import CandidateForm from '../views/Candidate/CandidateForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +47,16 @@ const router = createRouter({
         path: '/election/form/:id?',
         name: 'ElectionForm',
         component: ElectionForm
+    },
+    {
+        path: '/candidate',
+        name: 'Candidate',
+        component: Candidate
+    },
+    {
+        path: '/candidate/form/:id?',
+        name: 'CandidateForm',
+        component: CandidateForm
     },
   ]
 })
