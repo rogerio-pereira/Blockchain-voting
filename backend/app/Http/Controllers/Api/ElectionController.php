@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ElectionRequest;
+use App\Mail\ElectionStarted;
 use App\Models\Election;
+use Carbon\Carbon;
 
 class ElectionController extends Controller
 {
@@ -31,6 +33,35 @@ class ElectionController extends Controller
         $election->candidates()->sync($data['candidates']);
 
         return $election;
+    }
+
+    public function start(string $id)
+    {
+        $election = Election::with('votingDistricts.voters.user')
+                        ->with('candidates')
+                        ->findOrFail($id);
+
+        if($election->started != null) {
+            return response()->json(['message' => "Can't Start this election because it's already been started."], 400);
+        }
+
+        if($election->ended != null) {
+            return response()->json(['message' => "Can't start this election because it's already been ended."], 400);
+        }
+
+        $now = Carbon::now();
+        $election->update([
+                'started' => $now
+            ]);
+
+        foreach($election->votingDistricts as $district) {
+            foreach($district->voters as $voter) {
+                $user = $voter->user;
+
+                Mail::to($user->email)
+                    ->queue(new ElectionStarted($election, $user))
+            }
+        }
     }
 
     /**
