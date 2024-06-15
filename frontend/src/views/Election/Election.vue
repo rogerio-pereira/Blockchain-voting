@@ -23,10 +23,19 @@
                             :headers="headers"
                         >
                             <template v-slot:item.actions="{ item }">
+                                <v-btn 
+                                    density="compact"
+                                    color='success' 
+                                    variant="text"
+                                    icon="mdi-play-circle" 
+                                    title='Start'
+                                    v-if='item.started == null'
+                                    @click='startElection(item)'
+                                />
 
                                 <v-btn 
                                     density="compact"
-                                    color='info' 
+                                    color='secondary' 
                                     variant="text"
                                     icon="mdi-town-hall" 
                                     title='Districts'
@@ -35,7 +44,7 @@
 
                                 <v-btn 
                                     density="compact"
-                                    color='info' 
+                                    color='secondary' 
                                     variant="text"
                                     icon="mdi-account-tie" 
                                     title='Candidates'
@@ -111,7 +120,7 @@
             { title: 'End Date', value: 'end_date'},
             { title: 'Started', value: 'started'},
             { title: 'Ended', value: 'ended'},
-            { title: 'Actions', value: 'actions', width: '150' },
+            { title: 'Actions', value: 'actions', width: '200' },
         ]
 
     onMounted(() => {
@@ -141,6 +150,25 @@
         snackbarStore.showSnackBar('Deleting, please wait.', 'info', -1)
 
         axios.delete('/api/elections/'+id)
+            .then(response => {
+                snackbarStore.hideSnackBar()
+                loadElections()
+            })
+            .catch(error => {
+                const message = "Failed to delete. Reasons: "+error.response.data.message
+                snackbarStore.showSnackBar(message, 'error', 5000)
+            })
+            .finally(() => {
+                loading.value = false
+            })
+    }
+
+    function startElection(election)
+    {
+        loading.value = true
+        snackbarStore.showSnackBar('Starting election, please wait.', 'info', -1)
+
+        axios.post('/api/elections/'+election.id+'/start')
             .then(response => {
                 snackbarStore.hideSnackBar()
                 loadElections()
