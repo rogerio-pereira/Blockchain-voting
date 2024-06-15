@@ -14,6 +14,7 @@ class ElectionController extends Controller
     public function index()
     {
         return Election::with('votingDistricts')
+                    ->with('candidates')
                     ->get();
     }
 
@@ -38,6 +39,7 @@ class ElectionController extends Controller
     public function show(string $id)
     {
         $election = Election::with('votingDistricts')
+                        ->with('candidates')
                         ->findOrFail($id);
 
         return $election;
