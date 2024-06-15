@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\VotingDistrict;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -37,6 +38,17 @@ class Election extends Model
             'updated_at' => 'datetime:Y-m-d H:i:s',
             'deleted_at' => 'datetime:Y-m-d H:i:s',
         ];
+    }
+
+    /*
+     * =================================================================================================================
+     * Query Scopes
+     * =================================================================================================================
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereNotNull('started')
+            ->whereNull('ended');
     }
 
     /*
