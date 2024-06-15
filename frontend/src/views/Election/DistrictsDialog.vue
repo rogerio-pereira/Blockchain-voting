@@ -6,7 +6,7 @@
                     Voting Districts for Election {{electionId}}
                 </v-card-title>
 
-            <v-card-text>
+                <v-card-text>
                     <v-row>
                         <v-col>
                             <v-data-table 
