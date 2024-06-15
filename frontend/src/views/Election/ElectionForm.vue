@@ -29,7 +29,7 @@
                             clearable
                         />
 
-
+                        <!-- Voting District -->
                         <v-select
                             label="Voting District"
                             v-model='election.voting_districts'
@@ -57,6 +57,41 @@
                                 <v-chip v-if="index == 0">
                                     <span class="text-grey text-caption align-self-center">
                                         {{ election.voting_districts.length  }} items selected
+                                    </span>
+                                </v-chip>
+                            </template>
+                        </v-select>
+
+
+
+                        <!-- Candidates -->
+                        <v-select
+                            label="Candidates"
+                            v-model='election.candidates'
+                            :items="candidates"
+                            item-title="name"
+                            item-value="id"
+                            :error-messages="errors['election.candidates']"
+                            multiple
+                            clearable
+                        >
+                            <template v-slot:prepend-item>
+                                <v-list-item title="Select All" @click="toggleCandidates">
+                                    <template v-slot:prepend>
+                                        <v-checkbox-btn
+                                            :indeterminate="selectedSomeCandidates && !selectedAllCandidates"
+                                            :model-value="selectedAllCandidates"
+                                        ></v-checkbox-btn>
+                                    </template>
+                                </v-list-item>
+
+                                <v-divider class="mt-2"></v-divider>
+                            </template>
+
+                            <template v-slot:selection="{ item, index }">
+                                <v-chip v-if="index == 0">
+                                    <span class="text-grey text-caption align-self-center">
+                                        {{ election.candidates.length  }} items selected
                                     </span>
                                 </v-chip>
                             </template>
@@ -96,9 +131,11 @@
             start_date: null,
             end_date: null,
             voting_districts: [],
+            candidates: [],
         })
     const errors = ref([])
     const districts = ref([])
+    const candidates = ref([])
     
     const isCreating = computed(() => {            
             if(route.params.id == null || route.params.id == '' ) {
@@ -116,6 +153,7 @@
             }
 
             loadDistricts()
+            loadCandidates()
         })
 
     function loadData()
@@ -143,11 +181,20 @@
             })
     }
 
+    function loadCandidates()
+    {
+        axios.get('/api/candidates')
+            .then(response => {
+                candidates.value = response.data
+            })
+            .catch(error => {
+                const message = "Failed to load Candidates. Reasons: "+error.response.data.message
+                snackbarStore.showSnackBar(message, 'error', 5000)
+            })
+    }
+
     function save()
     {
-        console.log(election.value)
-        let data = election.value
-        data
         axios.post('/api/elections', election.value)
             .then(response => {
                 router.push('/election')
@@ -174,7 +221,7 @@
 
     /*
      * =================================================================================================================
-     * Methods Related to Autocomplete
+     * Methods Related to Selectbox
      * =================================================================================================================
      */
     const selectedSomeDistricts = computed(() => {            
@@ -190,6 +237,22 @@
                 election.value.voting_districts = []
             } else {
                 election.value.voting_districts = districts.value.map(element => element.id)    //Return all ids from districs
+            }
+        }
+
+    const selectedSomeCandidates = computed(() => {            
+            return election.value.candidates.length > 0
+        })
+
+    const selectedAllCandidates = computed(() => {            
+            return election.value.candidates.length === candidates.value.length
+        })
+
+    function toggleCandidates () {
+            if (selectedAllCandidates.value) {
+                election.value.candidates = []
+            } else {
+                election.value.candidates = candidates.value.map(element => element.id)    //Return all ids from candidates
             }
         }
 </script>

@@ -33,6 +33,15 @@
                                     @click='showDistrictDialog(item)'
                                 />
 
+                                <v-btn 
+                                    density="compact"
+                                    color='info' 
+                                    variant="text"
+                                    icon="mdi-account-tie" 
+                                    title='Candidates'
+                                    @click='showCandidateDialog(item)'
+                                />
+
                                 <RouterLink :to="'/election/form/'+item.id" class='mt-4'>
                                     <v-btn 
                                         density="compact"
@@ -65,6 +74,14 @@
         :districts='districtDialogDistricts'
         @closeDialog='closeDistrictDialog'
     />
+
+
+    <candidates-dialog 
+        :showDialog='candidateDialogShow'
+        :electionId='candidateDialogElectionId'
+        :candidates='candidateDialogCandidates'
+        @closeDialog='closeCandidateDialog'
+    />
 </template>
 
 <script setup>
@@ -72,6 +89,7 @@
     import axios from 'axios'
     import { useSnackbarStore } from '@/stores/snackbar'
     import DistrictsDialog from '@/views/Election/DistrictsDialog.vue'
+    import CandidatesDialog from '@/views/Election/CandidatesDialog.vue'
 
     const snackbarStore = useSnackbarStore()  
 
@@ -82,6 +100,10 @@
     const districtDialogShow = ref(false)
     const districtDialogElectionId = ref(null)
     const districtDialogDistricts = ref([])
+
+    const candidateDialogShow = ref(false)
+    const candidateDialogElectionId = ref(null)
+    const candidateDialogCandidates = ref([])
 
     const headers = [
             { title: 'Id', value: 'id' },
@@ -144,6 +166,21 @@
         districtDialogElectionId.value = null
         districtDialogDistricts.value = []
         districtDialogShow.value = false
+    }
+
+
+    function showCandidateDialog(election)
+    {
+        candidateDialogElectionId.value = election.id
+        candidateDialogCandidates.value = election.candidates
+        candidateDialogShow.value = true
+    }
+    
+    function closeCandidateDialog()
+    {
+        candidateDialogElectionId.value = null
+        candidateDialogCandidates.value = []
+        candidateDialogShow.value = false
     }
 </script>
 
