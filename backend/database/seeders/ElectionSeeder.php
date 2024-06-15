@@ -17,10 +17,14 @@ class ElectionSeeder extends Seeder
 
         $elections = Election::all();
         $votingDistricts = [1,2,3,4,5,6,7,8,9,10];  //VotingDistrictSeeders creates 10 items
+        $candidates = [1,2,3,4,5];  //CandidatesSeeder creates 5 items
 
         foreach($elections as $election) {
             $election->votingDistricts()
                 ->sync($votingDistricts);   //Add all Voting Districts to all ellections
+
+            $election->candidates()
+                ->sync($candidates);   //Add all Voting Districts to all ellections
         }
     }
 }

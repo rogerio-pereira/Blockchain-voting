@@ -48,4 +48,9 @@ class Election extends Model
     {
         return $this->belongsToMany(VotingDistrict::class);
     }
+
+    public function candidates(): BelongsToMany
+    {
+        return $this->belongsToMany(Candidate::class);
+    }
 }

@@ -24,7 +24,8 @@ class ElectionRequest extends FormRequest
         return [
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'voting_districts' => 'required|array'
+            'voting_districts' => 'required|array',
+            'candidates' => 'required|array',
         ];
     }
 }

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('election_voting_district', function (Blueprint $table) {
+        Schema::create('candidate_election', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('election_id');
-            $table->unsignedBigInteger('voting_district_id');
+            $table->unsignedBigInteger('candidate_id');
             $table->timestamps();
 
             $table->foreign('election_id')
@@ -22,9 +22,9 @@ return new class extends Migration
                 ->on('elections')
                 ->restrictOnDelete();
 
-            $table->foreign('voting_district_id')
+            $table->foreign('candidate_id')
                 ->references('id')
-                ->on('voting_districts')
+                ->on('candidates')
                 ->restrictOnDelete();
         });
     }
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('election_voting_district');
+        Schema::dropIfExists('candidate_election');
     }
 };

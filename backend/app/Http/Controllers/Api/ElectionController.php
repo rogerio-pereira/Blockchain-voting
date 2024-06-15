@@ -27,6 +27,7 @@ class ElectionController extends Controller
         $election = Election::create($data);
 
         $election->votingDistricts()->sync($data['voting_districts']);
+        $election->candidates()->sync($data['candidates']);
 
         return $election;
     }
@@ -53,6 +54,7 @@ class ElectionController extends Controller
         $election->update($data);
 
         $election->votingDistricts()->sync($data['voting_districts']);
+        $election->candidates()->sync($data['candidates']);
 
         return $election;
     }
