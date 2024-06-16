@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Election;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +14,7 @@ class ElectionSeeder extends Seeder
      */
     public function run(): void
     {
+        //Past Elections
         Election::factory(3)->create();
 
         $elections = Election::all();
@@ -26,5 +28,14 @@ class ElectionSeeder extends Seeder
             $election->candidates()
                 ->sync($candidates);   //Add all Voting Districts to all ellections
         }
+
+        //Ongoing Elections
+        $yesterday = Carbon::now()->subDay();
+        $tomorrow = Carbon::now()->addDay();
+        Election::create([
+            'start_date' => $yesterday,
+            'end_date' => $yesterday,
+            'started' => $tomorrow,
+        ]);
     }
 }

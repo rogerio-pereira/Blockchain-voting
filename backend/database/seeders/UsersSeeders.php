@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Voter;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,10 +20,13 @@ class UsersSeeders extends Seeder
             'password' => bcrypt('admin'),
             'role' => 'Admin',
         ]);
-        User::factory()->create([
-            'name' => 'Voter',
-            'email' => 'voter@voter.com',
-            'password' => bcrypt('voter'),
+        $voter = User::factory()->create([
+                        'name' => 'Voter',
+                        'email' => 'voter@voter.com',
+                        'password' => bcrypt('voter'),
+                    ]);
+        Voter::factory()->create([
+            'user_id' => $voter->id,
         ]);
     }
 }

@@ -1,7 +1,5 @@
 <template>
-    <RouterLink to="#" class='menuItem text-blue-grey-lighten-2'>
-        Test
-    </RouterLink>
+    
 </template>
 
 <script setup>

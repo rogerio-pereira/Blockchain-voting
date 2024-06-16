@@ -3,6 +3,12 @@
         <v-col>
             <h1>Welcome {{ userStore.user.name }}</h1>
     
+            <v-row v-if='elections.length > 0'>
+                <v-col>
+                    <h1>Elections Happening</h1>
+                </v-col>
+            </v-row>
+
             <v-row>
                 <v-col cols='12' md='6' lg='3' v-for='election of elections' :key='election.id'>
                     <v-card>
@@ -16,7 +22,13 @@
                         </v-card-text>
 
                         <v-card-actions class="pt-0 text-center">
-                            <v-btn color="primary" class='mx-auto' variant="outlined" block>
+                            <v-btn 
+                                color="primary" 
+                                class='mx-auto' 
+                                variant="outlined" 
+                                @click="router.push('election/'+election.id+'/vote')"
+                                block
+                            >
                                 Vote Now
                             </v-btn>
                         </v-card-actions>
@@ -32,6 +44,7 @@
     import axios from 'axios'
     import { useUserStore } from '@/stores/user'
     import { useSnackbarStore } from '@/stores/snackbar'
+    import router from '@/router'
 
     const userStore = useUserStore()
     const snackbarStore = useSnackbarStore()

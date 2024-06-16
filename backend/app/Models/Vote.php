@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Candidate extends Model
+class Vote extends Model
 {
     use HasFactory;
+    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'political_party',
+        'election_id',
+        'voter_hash',
+        'candidate_id',
     ];
 
     /**
@@ -37,13 +39,13 @@ class Candidate extends Model
      * RELATIONSHIPS
      * =================================================================================================================
      */
-    public function elections(): BelongsToMany
+    public function election(): BelongsTo
     {
-        return $this->belongsToMany(Election::class);
+        return $this->belongsTo(Election::class);
     }
 
-    public function votes(): HasMany
+    public function candidate(): BelongsTo
     {
-        return $this->hasMany(Vote::class);
+        return $this->belongsTo(Candidate::class);
     }
 }
