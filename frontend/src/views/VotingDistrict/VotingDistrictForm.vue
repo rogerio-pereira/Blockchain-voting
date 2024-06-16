@@ -18,6 +18,7 @@
                         <v-text-field 
                             label="Name"
                             v-model='district.name'
+                            :error-messages="errors['name']"
                             clearable
                         />
                     </v-col>
@@ -53,6 +54,7 @@
             id: null,
             name: null,
         })
+    const errors = ref([])
     
     const isCreating = computed(() => {            
             if(route.params.id == null || route.params.id == '' ) {
@@ -90,8 +92,13 @@
                 router.push('/voting-district')
             })
             .catch(error => {
-                const message = "Failed to create. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to create. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 
@@ -103,8 +110,13 @@
                 router.push('/voting-district')
             })
             .catch(error => {
-                const message = "Failed to update. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to update. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 </script>

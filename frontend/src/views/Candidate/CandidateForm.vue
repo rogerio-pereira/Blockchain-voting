@@ -18,12 +18,14 @@
                         <v-text-field 
                             label="Name"
                             v-model='candidate.name'
+                            :error-messages="errors['name']"
                             clearable
                         />
                         
                         <v-text-field 
                             label="Political Party"
                             v-model='candidate.political_party'
+                            :error-messages="errors['political_party']"
                             clearable
                         />
                     </v-col>
@@ -60,6 +62,7 @@
             name: null,
             political_party: null,
         })
+    const errors = ref([])
     
     const isCreating = computed(() => {            
             if(route.params.id == null || route.params.id == '' ) {
@@ -97,8 +100,13 @@
                 router.push('/candidate')
             })
             .catch(error => {
-                const message = "Failed to create. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to create. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 
@@ -110,8 +118,13 @@
                 router.push('/candidate')
             })
             .catch(error => {
-                const message = "Failed to update. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to update. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 </script>

@@ -11,15 +11,17 @@
                 label="Email"
                 v-model='form.email'
                 prepend-icon="mdi-at"
+                            :error-messages="errors['email']"
                 clearable
             />
 
             <v-text-field 
                 label="Password"
+                type='password'
                 v-model='form.password'
                 prepend-icon="mdi-asterisk"
+                :error-messages="errors['password']"
                 clearable
-                type='password'
             />
         </v-card-text>
 
@@ -48,6 +50,7 @@
         'email': '',
         'password': '',
     })
+    const errors = ref([])
 
     function login() {
         axios.post('/login', form.value)
@@ -56,8 +59,13 @@
                 router.push({name: 'Home'})
             })
             .catch(error => {
-                const message = "Failed to Login. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to Login. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 </script>

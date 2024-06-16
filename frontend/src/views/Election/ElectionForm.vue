@@ -25,7 +25,7 @@
                         <v-text-field 
                             label="End Date (YYYY-MM-DD)"
                             v-model='election.end_date'
-                            :error-messages="errors['voting_district_id']"
+                            :error-messages="errors['end_date']"
                             clearable
                         />
 
@@ -36,7 +36,7 @@
                             :items="districts"
                             item-title="name"
                             item-value="id"
-                            :error-messages="errors['election.voting_districts']"
+                            :error-messages="errors['voting_districts']"
                             multiple
                             clearable
                         >
@@ -71,7 +71,7 @@
                             :items="candidates"
                             item-title="name"
                             item-value="id"
-                            :error-messages="errors['election.candidates']"
+                            :error-messages="errors['candidates']"
                             multiple
                             clearable
                         >
@@ -145,8 +145,6 @@
             return false
         })
 
-    
-
     onMounted(() => {
             if(isCreating.value == false) {
                 loadData()
@@ -200,8 +198,13 @@
                 router.push('/election')
             })
             .catch(error => {
-                const message = "Failed to create. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to create. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 
@@ -213,8 +216,13 @@
                 router.push('/election')
             })
             .catch(error => {
-                const message = "Failed to update. Reasons: "+error.response.data.message
-                snackbarStore.showSnackBar(message, 'error', 5000)
+                if(error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                }
+                else {
+                    const message = "Failed to update. Reasons: "+error.response.data.message
+                    snackbarStore.showSnackBar(message, 'error', 5000)
+                }
             })
     }
 
