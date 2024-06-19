@@ -1,3 +1,10 @@
+# Deploy frontend
+```
+docker-compose up -d --build
+docker-compose exec -it frontend npm run build
+docker-compose exec -it frontend serverless deploy
+```
+
 # References
 - [Amazon Blockchain Document Ledger Repo](https://github.com/aws-samples/amazon-managed-blockchain-document-ledger)  
     Forked this repo and made some changes. Make sure you're using `node16` branch.  

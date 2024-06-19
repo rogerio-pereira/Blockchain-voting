@@ -1,0 +1,124 @@
+useDotenv: true
+service: voting-frontend
+
+provider:
+    name: aws  
+    runtime: nodejs14.x
+    region: us-east-1
+    stage: dev
+
+plugins:
+    - serverless-s3-sync
+
+resources:
+    Resources:
+        # Create our S3 storage bucket using CloudFormation
+        S3StaticWebsite:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: ${env:AWS_DOMAIN} #Bucket name should be the same as your domain
+                PublicAccessBlockConfiguration:
+                    BlockPublicAcls: false
+                OwnershipControls:
+                    Rules:
+                        - ObjectOwnership: ObjectWriter
+                WebsiteConfiguration:
+                    IndexDocument: index.html
+                    ErrorDocument: index.html
+
+        StaticSiteS3BucketPolicy:
+            Type: AWS::S3::BucketPolicy
+            Properties:
+                Bucket:
+                    Ref: S3StaticWebsite
+                PolicyDocument:
+                    Statement:
+                        -   Sid: PublicReadGetObject
+                            Effect: Allow
+                            Principal: "*"
+                            Action:
+                                - s3:GetObject
+                            Resource:
+                                Fn::Join: [
+                                    "", [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "S3StaticWebsite"
+                                        },
+                                        "/*"
+                                    ]
+                                ]
+        
+        Certificate:
+            Type: "AWS::CertificateManager::Certificate"
+            Properties:
+                DomainName: ${env:AWS_DOMAIN}
+                ValidationMethod: DNS
+
+        StaticWebsiteCDN:
+            Type: AWS::CloudFront::Distribution
+            Properties:
+                DistributionConfig:
+                    Origins:
+                        -   DomainName:
+                                Fn::GetAtt: [S3StaticWebsite, DomainName]
+                            Id: S3Origin
+                            S3OriginConfig: {}
+                    Enabled: true
+                    DefaultRootObject: index.html
+                    ViewerCertificate:
+                        AcmCertificateArn:
+                            Ref: Certificate
+                        SslSupportMethod: sni-only
+                        MinimumProtocolVersion: TLSv1.2_2021  # Ensures support for modern TLS
+                    DefaultCacheBehavior:
+                        AllowedMethods:
+                            - GET
+                            - HEAD
+                        TargetOriginId: S3Origin
+                        ViewerProtocolPolicy: redirect-to-https
+                        CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Use AWS managed cachingOptimized policy
+                        OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # Use AWS managed cachingOptimized policy
+                        Compress: true  # Enable automatic compression
+                        ForwardedValues:
+                            QueryString: false
+                            Cookies:
+                                Forward: none
+                    PriceClass: PriceClass_All  # Use all edge locations (best performance)
+                    HttpVersion: http2  # Supported HTTP versions: HTTP/2
+                    IPV6Enabled: true  # IPv6
+                    Restrictions:
+                        GeoRestriction:
+                            RestrictionType: none
+                    Aliases:
+                        - ${env:AWS_DOMAIN}  # Add your CNAME here
+
+        DnsRecord:
+            Type: "AWS::Route53::RecordSet"
+            Properties:
+                HostedZoneName: ${env:AWS_HOST}.  # Need . in the end
+                Name: ${env:AWS_DOMAIN}
+                Type: 'A'
+                AliasTarget:
+                    DNSName: 
+                        Fn::GetAtt: [StaticWebsiteCDN, DomainName]
+                    HostedZoneId: "Z2FDTNDATAQYW2"  # CloudFront hosted zone ID
+
+    Outputs:
+        S3StaticWebsiteOutputName:
+            Value: !Ref S3StaticWebsite
+        S3StaticWebsiteURL:
+            Value:
+                Fn::GetAtt: ["S3StaticWebsite", "WebsiteURL"]
+
+custom:
+    s3Sync:
+        -   bucketName: ${env:AWS_DOMAIN}
+            localDir: dist
+            acl: public-read
+            defaultContentType: text/html
+            params:
+                -   index.html:
+                    CacheControl: 'no-cache'
+                -   "*.js":
+                    CacheControl: 'public, max-age=31536000'

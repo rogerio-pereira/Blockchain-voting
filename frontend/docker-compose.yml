@@ -5,6 +5,9 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+            args:
+                AWS_ACCESS_KEY_ID: '${AWS_ACCESS_KEY_ID}'
+                AWS_SECRET_ACCESS_KEY: '${AWS_SECRET_ACCESS_KEY}'
         container_name: voting_frontend
         image: voting_frontend
         working_dir: /var/www/html/app/
