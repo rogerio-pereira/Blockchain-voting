@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\VotingDistrict;
+use App\Models\Candidate;
 
+use App\Models\Vote;
+use App\Models\Voter;
+use App\Models\VotingDistrict;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Election extends Model
 {
@@ -76,5 +80,24 @@ class Election extends Model
     public function voters(): BelongsToMany
     {
         return $this->belongsToMany(Voter::class);
+    }
+
+    /*
+     * =================================================================================================================
+     * AUXILIARY METHODS
+     * =================================================================================================================
+     */
+    public function getResults() : array
+    {
+        return Vote::select([
+                        'candidate_id',
+                        DB::raw('count(*) as total_votes')    
+                    ])
+                    ->with('candidate')
+                    ->where('election_id', $this->id)
+                    ->groupBy('candidate_id')
+                    ->orderBy('total_votes', 'DESC')
+                    ->get()
+                    ->toArray();
     }
 }

@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             UsersSeeders::class,
             VotingDistrictSeeders::class,
             CandidateSeeder::class,
+
+            //tests
             ElectionSeeder::class,
         ]);
     }

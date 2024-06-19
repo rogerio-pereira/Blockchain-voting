@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ElectionStarted extends Mailable implements ShouldQueue
+class ElectionEndedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -19,8 +19,8 @@ class ElectionStarted extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        public Election $election,
-        public User $user
+        public User $user,
+        public array $results
     ) { }
 
     /**
@@ -29,7 +29,7 @@ class ElectionStarted extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Election Started. Vote Now!',
+            subject: 'Election Ended. Check Results!',
         );
     }
 
@@ -39,7 +39,7 @@ class ElectionStarted extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.elections.started',
+            markdown: 'mail.elections.ended',
         );
     }
 

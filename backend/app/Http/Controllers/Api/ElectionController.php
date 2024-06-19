@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ElectionRequest;
-use App\Mail\ElectionStarted;
+use App\Mail\ElectionStartedMail;
 use App\Models\Election;
+use App\Models\Vote;
+use App\Services\ElectionEndedService;
+use App\Services\ElectionStartedService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ElectionController extends Controller
@@ -42,7 +46,7 @@ class ElectionController extends Controller
         return $election;
     }
 
-    public function start(string $id)
+    public function start(string $id, ElectionStartedService $service)
     {
         $election = Election::with('votingDistricts.voters.user')
                         ->with('candidates')
@@ -56,33 +60,35 @@ class ElectionController extends Controller
             return response()->json(['message' => "Can't start this election because it's already been ended."], 400);
         }
 
-        $now = Carbon::now();
-        $election->update([
-                'started' => $now
-            ]);
+        try {
+            $service->start($election);
 
-        foreach($election->votingDistricts as $district) {
-            foreach($district->voters as $voter) {
-                $user = $voter->user;
-
-                Mail::to($user->email)
-                    ->queue(new ElectionStarted($election, $user));
-            }
+            return response()->json(['message' => 'Election stopped'], 200);
+        }
+        catch(\Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
-    public function stop(string $id)
+    public function stop(string $id, ElectionEndedService $service)
     {
-        $election = Election::findOrFail($id);
+        $election = Election::with('votingDistricts.voters.user')
+                        ->findOrFail($id);
 
         if($election->ended != null) {
             return response()->json(['message' => "Can't stop this election because it's already been ended."], 400);
         }
 
-        $now = Carbon::now();
-        $election->update([
-                'ended' => $now
-            ]);
+        try {
+            $service->stop($election);
+
+            return response()->json(['message' => 'Election stopped'], 200);
+        }
+        catch(\Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -95,6 +101,13 @@ class ElectionController extends Controller
                         ->findOrFail($id);
 
         return $election;
+    }
+
+    public function votes(string $id)
+    {
+        $election = Election::findOrFail($id);
+
+        return $election->getResults($election);
     }
 
     /**

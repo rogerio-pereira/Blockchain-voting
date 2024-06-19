@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
         Route::post('/elections/{id}/start', [ElectionController::class, 'start']);
         Route::post('/elections/{id}/stop', [ElectionController::class, 'stop']);
+        Route::get('/elections/{id}/votes', [ElectionController::class, 'votes']);
         Route::resource('/elections', ElectionController::class);
     });
 });
