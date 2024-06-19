@@ -87,6 +87,17 @@
                                     v-if='item.started != null && item.ended == null'
                                     @click='endElection(item)'
                                 />
+
+                                <!-- Show Results -->
+                                <v-btn 
+                                    density="compact"
+                                    color='info' 
+                                    variant="text"
+                                    icon="mdi-counter" 
+                                    title='Show Results'
+                                    v-if='item.ended != null'
+                                    @click='showResultDialog(item)'
+                                />
                             </template>
                         </v-data-table>
                     </v-col>
@@ -109,6 +120,13 @@
         :candidates='candidateDialogCandidates'
         @closeDialog='closeCandidateDialog'
     />
+
+
+    <result-dialog 
+        :showDialog='resultDialogShow'
+        :electionId='resultDialogElectionId'
+        @closeDialog='closeResultDialog'
+    />
 </template>
 
 <script setup>
@@ -117,6 +135,7 @@
     import { useSnackbarStore } from '@/stores/snackbar'
     import DistrictsDialog from '@/views/Election/DistrictsDialog.vue'
     import CandidatesDialog from '@/views/Election/CandidatesDialog.vue'
+    import ResultDialog from '@/views/Election/ResultDialog.vue'
 
     const snackbarStore = useSnackbarStore()  
 
@@ -131,6 +150,9 @@
     const candidateDialogShow = ref(false)
     const candidateDialogElectionId = ref(null)
     const candidateDialogCandidates = ref([])
+
+    const resultDialogShow = ref(false)
+    const resultDialogElectionId = ref(null)
 
     const headers = [
             { title: 'Id', value: 'id' },
@@ -246,6 +268,19 @@
         candidateDialogElectionId.value = null
         candidateDialogCandidates.value = []
         candidateDialogShow.value = false
+    }
+
+
+    function showResultDialog(election)
+    {
+        resultDialogElectionId.value = election.id
+        resultDialogShow.value = true
+    }
+    
+    function closeResultDialog()
+    {
+        resultDialogElectionId.value = null
+        resultDialogShow.value = false
     }
 </script>
 
