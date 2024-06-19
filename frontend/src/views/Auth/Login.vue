@@ -11,7 +11,7 @@
                 label="Email"
                 v-model='form.email'
                 prepend-icon="mdi-at"
-                            :error-messages="errors['email']"
+                :error-messages="errors['email']"
                 clearable
             />
 
