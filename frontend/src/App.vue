@@ -24,6 +24,10 @@
                     
                     <!-- Logged in -->
                     <span v-if='!userStore.isGuest'>
+                        <RouterLink to="/vote/verify" class='menuItem text-blue-grey-lighten-2'>
+                            Verify Vote
+                        </RouterLink>
+
                         <span v-if="userStore.user.role.toLowerCase() == 'admin'">
                             <admin-menu />
                         </span>

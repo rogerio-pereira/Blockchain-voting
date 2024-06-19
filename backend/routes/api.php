@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BlockchainController;
 use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\ElectionController;
 use App\Http\Controllers\Api\VoteController;
@@ -23,6 +24,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/elections/active', [ElectionController::class, 'active']);
     Route::post('/vote', [VoteController::class, 'store']);
     Route::get('/candidates/open', [CandidateController::class, 'index']);
+
+    Route::get('blockchain/verify/{id}', [BlockchainController::class, 'verify']);
 
     //Admin Routes
     Route::group(['middleware' => [IsAdmin::class]], function() {

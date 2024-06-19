@@ -88,6 +88,7 @@
             election_id: electionId.value,
         }
 
+        snackbarStore.showSnackBar('Registering vote in blockchain. Please wait.', 'info', -1)
         axios.post('/api/vote', data)
             .then(response => {
                 const message = response.data.message

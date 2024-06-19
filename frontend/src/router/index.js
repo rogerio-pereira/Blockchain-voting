@@ -10,6 +10,7 @@ import ElectionForm from '../views/Election/ElectionForm.vue'
 import Candidate from '../views/Candidate/Candidate.vue'
 import CandidateForm from '../views/Candidate/CandidateForm.vue'
 import VoteForm from '../views/Vote/VoteForm.vue'
+import VoteVerify from '../views/Vote/VoteVerify.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,11 @@ const router = createRouter({
         path: '/election/:id/vote',
         name: 'VoteForm',
         component: VoteForm
+    },
+    {
+        path: '/vote/verify/:id?',
+        name: 'VoteVerify',
+        component: VoteVerify
     },
   ]
 })
