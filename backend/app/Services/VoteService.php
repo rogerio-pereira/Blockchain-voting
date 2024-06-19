@@ -12,10 +12,20 @@ use Illuminate\Support\Facades\Mail;
 
 class VoteService
 {
+    public function __construct(
+        public BlockchainService $blockchain
+    ) { }
+
     public function vote(User $user, Voter $voter, int $electionId, int $candidateId)
     {
         try {
             $vote = $this->registerVote($voter, $electionId, $candidateId);
+            
+            $blockchainId = $this->sendToBlockchain($vote);
+
+            $vote->update([
+                    'blockchain_id' => $blockchainId
+                ]);
 
             $this->sendEmail($user, $vote);
         }
@@ -57,6 +67,21 @@ class VoteService
         {
             DB::rollback();
 
+            throw $e;
+        }
+    }
+
+    private function sendToBlockchain(Vote $vote) : string
+    {
+        try {
+            $arrayVote = $vote->toArray();
+
+            $response = $this->blockchain->store($arrayVote);
+
+            return $response['documentId'];
+        }
+        catch(\Exception $e)
+        {
             throw $e;
         }
     }

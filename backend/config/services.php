@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'blockchain' => [
+        'reader' => [
+            'url' => env('BLOCKCHAIN_READER_URL'),
+            'authorization_key' => env('BLOCKCHAIN_READER_AUTHORIZATION_KEY'),
+        ],
+        'writer' => [
+            'url' => env('BLOCKCHAIN_WRITER_URL'),
+            'authorization_key' => env('BLOCKCHAIN_WRITER_AUTHORIZATION_KEY'),
+        ],
+    ],
+
 ];

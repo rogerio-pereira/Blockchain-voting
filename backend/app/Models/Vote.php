@@ -18,6 +18,7 @@ class Vote extends Model
         'election_id',
         'voter_hash',
         'candidate_id',
+        'blockchain_id',
     ];
 
     /**

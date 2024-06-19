@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('election_id');
             $table->string('voter_hash');    //Hashing voter to make voting secret, this way we can check the hash if needed, but it won't be public
             $table->unsignedBigInteger('candidate_id');
+            $table->string('blockchain_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
